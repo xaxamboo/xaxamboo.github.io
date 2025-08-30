@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Web | KKN Nusantara — Film KKNT Nusantara 2024</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+          --bg-1:#252529;        
+          --bg-2:#252529;        
+          --primary:#252529;     
+          --secondary:#252529;   
+          --accent:#252529;      
+          --text:#f5f5f5;        /* putih abu-abu biar kontras */
+          --card:#252529;        
+          --ring:#252529;        
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+          font-family: 'Quicksand', sans-serif;
+          background: linear-gradient(135deg, var(--bg-1), var(--bg-2));
+          color: var(--text);
+          overflow-x: hidden;
+          position: relative;
+        }
+
+        /* Splash */
+        #splash {
+          position: fixed; inset: 0; display:flex; align-items:center; justify-content:center;
+          background: radial-gradient(1000px 400px at 50% 50%, rgba(46,125,50,0.35), var(--bg-2) 60%);
+          z-index: 9999; animation: fadeOut 900ms ease-in-out forwards; animation-delay: 2200ms;
+        }
+        #splash.hide { display:none; }
+        .splash-text { font-size: 2.2rem; text-align:center; padding:0 24px; line-height:1.35 }
+        .splash-text .brand { font-family: 'Pacifico', cursive; color: var(--accent); display:block; font-size:2.6rem; color: #ffffff;}
+
+        /* Confetti (daun jatuh) */
+        #confetti { position: fixed; inset: 0; pointer-events: none; z-index:0; }
+
+        /* Kartu utama */
+        .box-main {
+          width: min(92%, 820px);
+          background-color: var(--card);
+          margin: 88px auto;
+          padding: 28px 22px;
+          border: 4px solid var(--ring);
+          border-radius: 22px;
+          box-shadow: 0 14px 30px rgba(0,0,0,0.45);
+          text-align: center;
+          transition: border-color .6s ease;
+          position: relative; z-index: 5;
+          color: #ffffff !important;
+        }
+
+        .header-top { display:flex; gap:16px; align-items:center; justify-content:center; flex-wrap:wrap; margin-bottom: 14px; }
+        .logo-kkn {
+          width: 72px; height:72px; border-radius: 16px; object-fit: cover;
+          border: 3px solid #ffffff;
+          background:#0e231b;
+        }
+
+        h1 { font-family:'Pacifico', cursive; color: var(--accent); font-size: 2.2rem;  color: #ffffff; }
+        .subtitle { opacity:.9; font-size: 1.05rem; margin-top: 2px; color: #ffffff !important; }
+
+        .hero {
+          width: 100%;
+          aspect-ratio: 16/7;
+          border-radius: 18px;
+          overflow: hidden;
+          margin: 18px 0 8px;
+          border: 3px solid #ffffff;
+          position: relative;
+        }
+
+        .hero video {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+
+        p { font-size: 1.04rem; margin: 8px 0; line-height: 1.7; color: #ffffff; text-align: justify; }
+
+        .button-group { margin-top: 14px; display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+        .btn {
+            padding: 11px 18px; background: var(--secondary); border: none; color: #08150f;
+            border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: 700;
+            transition: transform .05s ease, filter .25s ease; user-select:none;
+            background-color: #333338;  /* sedikit lebih terang dari #252529 */
+            color: #f5f5f5;             /* teks putih */
+            border: 1px solid #444;  
+        }
+        .btn:hover { filter: brightness(1.15); background-color: #444; }
+        .btn:active { transform: translateY(1px) scale(.995); }
+
+        /* Popup / Modal */
+        .popup { display:none; position: fixed; inset: 0; background: rgba(0,0,0,.6);
+                 justify-content: center; align-items: center; z-index: 1000; padding: 16px; }
+        .popup[style*="display: block"] {
+          display: flex !important;
+        }
+        .popup.show { display:flex; }
+
+        .popup-content {
+          background-color: var(--card); color: var(--text); padding: 24px; border-radius: 16px;
+          width: min(94%, 860px); max-height: 86vh; overflow: hidden; border: 3px solid var(--accent);
+          box-shadow: 0 18px 36px rgba(0,0,0,.5);
+        }
+
+        .popup-header { display:flex; align-items:center; justify-content:space-between; gap: 12px; margin-bottom: 10px; }
+        .popup-title { font-weight: 800; font-size: 1.25rem; }
+        .popup-close { background: transparent; border:2px solid var(--accent); color: var(--text); padding:8px 12px; border-radius: 10px; cursor:pointer; }
+
+        .scroll-area { overflow:auto; max-height: calc(86vh - 60px); scrollbar-width:none; }
+        .scroll-area::-webkit-scrollbar { display:none; }
+
+        .sinopsis p { text-align: left; color: #ffffff;}
+
+        /* Galeri */
+        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+        .memory { background: #1a3a2c; border: 2px solid var(--accent); border-radius: 14px; overflow: hidden; box-shadow: 0 8px 16px rgba(0,0,0,.35); }
+        .memory img { width: 100%; height: 160px; object-fit: cover; display:block; }
+        .memory .cap { padding: 12px 12px 14px; font-size: .98rem; color:#e6ffef; }
+
+        /* Video */
+        .video-wrap { position: relative; width:100%; padding-top:10; border-radius: 14px; overflow:hidden; border: 2px solid var(--accent); background:#0b1e16; }
+        .video-wrap iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+        .video-wrap video {
+          width: 100%;
+          height: auto;
+          max-height: 80vh;  /* biar nggak keluar layar */
+          border-radius: 12px;
+        }
+
+        /* Footer note */
+        .meta { margin-top: 14px; font-size: .9rem; opacity:.85 }
+
+        @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+    </style>
+</head>
+<body>
+  <!-- Splash Screen -->
+  <div id="splash">
+    <div class="splash-text">
+      <span class="brand">KKNT Nusantara</span>
+      <div>Film KKNT Nusantara - Pekon Teratas</div>
+    </div>
+  </div>
+
+  <!-- Canvas Partikel (daun jatuh) -->
+  <canvas id="confetti"></canvas>
+
+  <!-- Konten Utama -->
+  <main class="box-main" aria-live="polite">
+    <div class="header-top">
+      <img src="img/logo_kkn.jpg" alt="Logo KKN" class="logo-kkn" />
+      <div>
+        <h1>KKNT Nusantara • 2024</h1>
+        <p class="subtitle">Kenangan kebersamaan di Teratas, yang akan selalu jadi bagian dari cerita kami.</p>
+      </div>
+    </div>
+
+    <figure class="hero">
+      <video controls autoplay loop playsinline>
+        <source src="img/trailer_kkn.mp4" type="video/mp4" />
+        Browser kamu tidak mendukung video.
+      </video>
+      <figcaption>Potret desa & kegiatan KKN</figcaption>
+    </figure>
+
+    <p>ini adalah cerita pertemuan, yang menyimpan arti begitu dalam. Bukan sekedar desa, bukan hanya warga, keluarga, teman, 
+      sahabat atau rumah tapi tempat dimana langkah kami menyatu dengan harapan, tawa, peluh, dan cerita. 
+      Tempat asing yang perlahan menjadi bagian dari hati. Di sinilah kami belajar arti dari memberi, berbagi, dan mencintai tanpa pamrih. 
+      Sebuah kenangan yang akan selalu hidup, meski waktu berjalan. Hampir satu tahun telah berlalu sejak langkah pertama kami menapaki 
+      tanah itu, sebuah desa yang memberi makna besar. Film ini bukan sekedar kenangan, tapi cerita yang hidup kembali dalam layar. 
+      Tawa, perjuangan, dan pertemuan yang tak akan pernah terlupakan.
+    </p>
+
+    <div class="button-group" role="group" aria-label="Aksi utama">
+      <button class="btn" onclick="openModal('film')">🎬 Tonton Film</button>
+      <button class="btn" onclick="openModal('galeri')">📸 Foto Kami</button>
+    </div>
+
+  </main>
+
+  <!-- Modal: Film -->
+  <section class="popup" id="modal-film" aria-hidden="true" aria-labelledby="title-film" role="dialog">
+    <div class="popup-content" role="document">
+      <div class="popup-header">
+        <div class="popup-title" id="title-film">🎬 Film KKNT Nusantara Pekon Teratas 2024</div>
+        <button class="popup-close" onclick="closeModal('film')">Tutup</button>
+      </div>
+      <div class="scroll-area">
+      <div class="video-wrap">
+        <iframe id="film-iframe" 
+                src="https://youtu.be/embed/uEzTRX_gMOc" 
+                title="Film KKNT Teratas 2024" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                allowfullscreen>
+        </iframe>
+</div>
+
+  </section>
+
+  <!-- Modal: Sinopsis -->
+  <section class="popup" id="modal-sinopsis" aria-hidden="true" aria-labelledby="title-sinopsis" role="dialog">
+    <div class="popup-content" role="document">
+      <div class="popup-header">
+        <div class="popup-title" id="title-sinopsis">📜 Sinopsis</div>
+        <button class="popup-close" onclick="closeModal('sinopsis')">Tutup</button>
+      </div>
+      <div class="scroll-area sinopsis">
+        <p>
+          Diangkat dari pengalaman nyata, dokumenter ini menyoroti bagaimana tim KKN berusaha menyelesaikan isu pengelolaan sampah
+          dan literasi lingkungan di desa melalui pendekatan teknologi dan pemberdayaan warga. Dimulai dari pemetaan masalah,
+          tim kemudian merancang solusi: <em>tong sampah pintar berbasis IoT</em> (ESP32 + sensor ultrasonik), pelatihan bank sampah,
+          kerajinan daur ulang, pengadaan tong bambu, dan edukasi kreatif untuk siswa SD.
+        </p>
+        <p>
+          Film menampilkan momen-momen lapangan: diskusi dengan perangkat desa, uji coba alat, hambatan teknis, sekaligus cerita personal
+          para anggota tim dan warga. Ujungnya adalah refleksi: dampak yang terasa, pelajaran yang dibawa pulang, dan bagaimana program
+          dapat berlanjut secara mandiri oleh komunitas.
+        </p>
+        <p>
+          <strong>Durasi:</strong> ± 10–20 menit • <strong>Lokasi:</strong> Desa Teratas, Lampung • <strong>Tahun:</strong> 2025
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal: Foto Mahasiswa KKN -->
+  <section class="popup" id="modal-galeri" aria-hidden="true" aria-labelledby="title-galeri" role="dialog">
+    <div class="popup-content" role="document">
+      <div class="popup-header">
+        <div class="popup-title" id="title-galeri">📸 Foto Mahasiswa KKN Teratas</div>
+        <button class="popup-close" onclick="closeModal('galeri')">Tutup</button>
+      </div>
+      <div class="scroll-area">
+        <div class="gallery">
+
+          <!-- Contoh mahasiswa -->
+          <article class="memory">
+            <img src="img/aiq.jpg" alt="Siti Pariqoh Al Musapaah" loading="lazy" />
+            <div class="cap">
+              <strong>Siti Pariqoh Al Musapaah</strong><br />
+              Universitas Ibn Khaldun (UIKA Bogor)
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/amel.jpg" alt="Amalia Ramadhani" loading="lazy" />
+            <div class="cap">
+              <strong>Amalia Ramadhani</strong><br />
+              Universitas Ibn Khaldun (UIKA Bogor)
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/nita.png" alt="Ernita Dwi Lestari" loading="lazy" />
+            <div class="cap">
+              <strong>Ernita Dwi Lestari</strong><br />
+              Universitas Ibn Khaldun (UIKA Bogor)
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/arpilah.jpg" alt="Arpillah" loading="lazy" />
+            <div class="cap">
+              <strong>Arpillah</strong><br />
+              Universitas Ibn Khaldun (UIKA Bogor)
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/zulfa.jpg" alt="Siti Alawia Zulfa" loading="lazy" />
+            <div class="cap">
+              <strong>Siti Alawia Zulfa</strong><br />
+              Universitas Ibn Khaldun (UIKA Bogor)
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/akbar.jpg" alt="Akbar" loading="lazy" />
+            <div class="cap">
+              <strong>Akbar</strong><br />
+              Universitas Sangga Buana (Bandung)
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/andre.jpg" alt="Andre Pernanda" loading="lazy" />
+            <div class="cap">
+              <strong>Andre Pernanda</strong><br />
+              Universitas Bandar Lampung (UBL)
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/riyan.jpg" alt="Riyan Hermawan" loading="lazy" />
+            <div class="cap">
+              <strong>Riyan Hermawan</strong><br />
+              Universitas Langlang Buana (UNLA Bandung)
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/iqbal.jpg" alt="Iqbal Khaerul Saputra" loading="lazy" />
+            <div class="cap">
+              <strong>Iqbal Khaerul Saputra</strong><br />
+              Universitas Langlang Buana (UNLA Bandung)
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/andika.jpg" alt="Andyka Suryadayana" loading="lazy" />
+            <div class="cap">
+              <strong>Andyka Suryadayana</strong><br />
+              Global Institut (Tanggerang)
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/inoi.jpg" alt="Sutrisno" loading="lazy" />
+            <div class="cap">
+              <strong>Sutrisno</strong><br />
+              Global Institut (Tanggerang)
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/martin.jpg" alt="Rifqi Martin Abdul Hakim" loading="lazy" />
+            <div class="cap">
+              <strong>Rifqi Martin Abdul Hakim</strong><br />
+              Institut Teknologi Nasional (ITENAS Bandung)
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/putra.jpg" alt="Putra Fajar Dwi Aprilian" loading="lazy" />
+            <div class="cap">
+              <strong>Putra Fajar Dwi Aprilian</strong><br />
+              Institut Teknologi Nasional (ITENAS Bandung)
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/afsa.jpg" alt="Afsa Luxij Nurdiansyah" loading="lazy" />
+            <div class="cap">
+              <strong>Afsa Luxij Nurdiansyah</strong><br />
+              Institut Teknologi Nasional (ITENAS Bandung)
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/freddy.jpg" alt="Freddy Kristian Putra" loading="lazy" />
+            <div class="cap">
+              <strong>Freddy Kristian Putra</strong><br />
+              Institut Teknologi Nasional (ITENAS Bandung)
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/kknt.jpg" alt="Family" loading="lazy" />
+            <div class="cap">
+              <strong></strong><br />
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/friends.jpg" alt="Friends" loading="lazy" />
+            <div class="cap">
+              <strong></strong><br />
+            </div>
+          </article>
+
+          <article class="memory">
+            <img src="img/kkn.jpg" alt="Kkn" loading="lazy" />
+            <div class="cap">
+              <strong></strong><br />
+            </div>
+          </article>
+
+          <!-- ... lanjutkan sampai 25 mahasiswa -->
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <script>
+    // ====== Border color cycle (nuansa hijau) ======
+    const colors = ["#ffffff", "#f5f5f5", "#e0e0e0", "#cccccc"]; // ring animation
+    let idx = 0;
+    setInterval(() => {
+      const el = document.querySelector('.box-main');
+      if(!el) return;
+      el.style.borderColor = colors[idx];
+      idx = (idx + 1) % colors.length;
+    }, 1100);
+
+    // ====== Splash hide ======
+    window.addEventListener("load", () => {
+      setTimeout(() => document.getElementById("splash").classList.add("hide"), 2300);
+      startLeaves();
+    });
+
+    // ====== Modal helpers ======
+    function openModal(key){
+      const modal = document.getElementById('modal-'+key);
+      modal.style.display = 'block';
+      if(key==='film'){ 
+        const iframe = document.getElementById('film-iframe');
+        iframe.src = "https://www.youtube.com/embed/uEzTRX_gMOc?autoplay=1";
+      }
+    }
+
+    function closeModal(key){
+      const modal = document.getElementById('modal-'+key);
+      modal.style.display = 'none';
+      if(key==='film'){
+        const iframe = document.getElementById('film-iframe');
+        iframe.src = "https://www.youtube.com/embed/uEzTRX_gMOc";
+      }
+  }
+
+    // Tutup modal dengan ESC atau klik backdrop
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') document.querySelectorAll('.popup.show').forEach(x=>x.classList.remove('show')); });
+    document.querySelectorAll('.popup').forEach(pop=>{
+      pop.addEventListener('click', (e)=>{ if(e.target === pop){
+        pop.classList.remove('show'); pop.setAttribute('aria-hidden','true'); document.body.style.overflow='';
+        if(pop.id==='modal-film'){ document.getElementById('film-iframe').src=''; }
+      }});
+    });
+
+    // ====== Kanvas daun jatuh (mirip confetti tapi lebih natural) ======
+    function startLeaves(){
+      const canvas = document.getElementById('confetti');
+      const ctx = canvas.getContext('2d');
+      const DPR = window.devicePixelRatio || 1;
+
+      function resize(){ canvas.width = innerWidth * DPR; canvas.height = innerHeight * DPR; }
+      resize();
+      window.addEventListener('resize', resize);
+
+      const leaves = [];
+      const palette = ["#ffffff", "#fdfdfd", "#f0f0f0", "#e5e5e5"]; // hijau berbagai shade
+      const COUNT = 90;
+
+      for(let i=0;i<COUNT;i++){
+        leaves.push({
+          x: Math.random()*canvas.width,
+          y: Math.random()*canvas.height - canvas.height,
+          s: Math.random()*8 + 4,
+          v: Math.random()*1.5 + 0.6,
+          c: palette[Math|0(Math.random()*palette.length)],
+          r: Math.random()*360,
+          drift: (Math.random()*0.6)+0.2,
+        });
+      }
+
+      function draw(){
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        for(const p of leaves){
+          ctx.save();
+          ctx.fillStyle = p.c;
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.r*Math.PI)/180);
+          // bentuk daun sederhana (rombik)
+          const w = p.s, h = p.s*1.6;
+          ctx.beginPath();
+          ctx.moveTo(0,-h/2);
+          ctx.lineTo(w/2,0);
+          ctx.lineTo(0,h/2);
+          ctx.lineTo(-w/2,0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+
+          p.y += p.v * DPR;   // jatuh
+          p.x += Math.sin(p.y/50)*p.drift * DPR; // goyangan angin
+          p.r += p.v;         // rotasi
+
+          if(p.y > canvas.height){
+            p.y = -10*DPR;
+            p.x = Math.random()*canvas.width;
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    }
+  </script>
+</body>
+</html>
